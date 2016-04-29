@@ -1,0 +1,444 @@
+<!DOCTYPE HTML>
+<html>
+
+<head> 
+<style type="text/css">
+	#row{
+		padding: 1%;
+
+	}
+	#chartContainer{
+	    /*border: thin solid black;*/
+	    overflow-y:scroll;
+	    height: 600px;
+	}
+	#chartContainer0,#chartContainer1,#chartContainer2,#chartContainer3,#chartContainer4{
+	    height: 400px;
+	    width: 80%;
+	    float: center;
+	    padding: 2%;
+	}
+</style>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="/d3.min.js" charset="utf-8"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+	var type = "splineArea";
+	var max_month=12;
+	var data1 = new Array;
+	var support_data = new Array;
+	var quality_data = new Array;
+	var delivery_data = new Array;
+	var packaging_data = new Array;
+	var comparatively_data = new Array;
+	var positive_val = true,negative_val = true, neutral_val = true;
+	$(document).ready(function () {
+	    $('#checkbox0').change(function () {
+	        if (this.checked) 
+	           $('#chartContainer0').fadeIn('slow');
+	        else 
+	        {
+	        	document.getElementById('featureall').checked=false;
+	            $('#chartContainer0').fadeOut('slow');
+	        }
+	    });
+	});
+
+	$(document).ready(function () {
+	    $('#checkbox1').change(function () {
+	        if (this.checked) 
+	        //  ^
+	           $('#chartContainer1').fadeIn('slow');
+	        else 
+	        {
+	        	document.getElementById('featureall').checked=false;
+	            $('#chartContainer1').fadeOut('slow');
+	        }
+	    });
+	});
+	$(document).ready(function () {
+	    $('#checkbox2').change(function () {
+	        if (this.checked) 
+	        //  ^
+	           $('#chartContainer2').fadeIn('slow');
+	        else 
+	        {
+	        	document.getElementById('featureall').checked=false;
+	            $('#chartContainer2').fadeOut('slow');
+	        }
+	    });
+	});
+	$(document).ready(function () {
+	    $('#checkbox3').change(function () {
+	        if (this.checked) 
+	        //  ^
+	           $('#chartContainer3').fadeIn('slow');
+	        else 
+	        {
+	        	document.getElementById('featureall').checked=false;
+	            $('#chartContainer3').fadeOut('slow');
+	        }
+	    });
+	});
+	$(document).ready(function () {
+	    $('#checkbox4').change(function () {
+	        if (this.checked) 
+	        //  ^
+	           $('#chartContainer4').fadeIn('slow');
+	        else 
+	        {
+	        	document.getElementById('featureall').checked=false;
+	            $('#chartContainer4').fadeOut('slow');
+	        }
+	    });
+	});
+	$(document).ready(function () {
+	    $('#positive').change(function () {
+	        if (this.checked) 
+	        	positive_val = true;
+	        else 
+	        {
+	        	document.getElementById('sentimentall').checked=false;
+	            positive_val = false;
+	        }
+	        update();
+	    });
+	});
+	$(document).ready(function () {
+	    $('#negative').change(function () {
+	        if (this.checked) 
+	        	negative_val = true;
+	        else 
+	        {
+	        	document.getElementById('sentimentall').checked=false;
+	            negative_val = false;
+	        }
+	        update();
+	    });
+	});
+	$(document).ready(function () {
+	    $('#neutral').change(function () {
+	        if (this.checked) 
+	        {
+	        	// alert("checked");
+	        	neutral_val = true;
+	        }
+	        else 
+	        {
+	        	document.getElementById('sentimentall').checked=false;
+	            neutral_val = false;
+	        }
+	        update();
+	    });
+	});
+
+	function checkAllfeature(ele) {
+		var checkboxes = document.getElementsByName('feature');
+		if (ele.checked) {
+			for (var i = 0; i < checkboxes.length; i++) {
+			    if (checkboxes[i].name == 'feature' && checkboxes[i].type == 'checkbox') {
+			         checkboxes[i].checked = true;
+			    }
+			}
+			$('#chartContainer0').fadeIn('slow');
+	        $('#chartContainer1').fadeIn('slow');
+	        $('#chartContainer2').fadeIn('slow');
+	        $('#chartContainer3').fadeIn('slow');
+	        $('#chartContainer4').fadeIn('slow');
+		}
+		else {
+			for (var i = 0; i < checkboxes.length; i++) {
+				console.log(i)
+				if (checkboxes[i].name == 'feature' && checkboxes[i].type == 'checkbox') {
+					checkboxes[i].checked = false;
+				}
+ 			}
+ 			$('#chartContainer0').fadeOut('slow');
+	        $('#chartContainer1').fadeOut('slow');
+	        $('#chartContainer2').fadeOut('slow');
+	        $('#chartContainer3').fadeOut('slow');
+	        $('#chartContainer4').fadeOut('slow');
+		}
+		update();
+ 	}
+ 	function checkAllsentiment(ele) {
+		var checkboxes = document.getElementsByName('sentiment');
+		if (ele.checked) {
+			for (var i = 0; i < checkboxes.length; i++) {
+			    if (checkboxes[i].name == 'sentiment' && checkboxes[i].type == 'checkbox') {
+			         checkboxes[i].checked = true;
+			    }
+			    positive_val=true;
+			    negative_val=true;
+			    neutral_val=true;
+			}
+		}
+		else {
+			for (var i = 0; i < checkboxes.length; i++) {
+				console.log(i)
+				if (checkboxes[i].name == 'sentiment' && checkboxes[i].type == 'checkbox') {
+					checkboxes[i].checked = false;
+				}
+ 			}
+ 			positive_val=false;
+		    negative_val=false;
+		    neutral_val=false;
+		}
+		update();
+ 	}
+
+	function update(){
+		get_data_by_sentiment(delivery_data,"chartContainer0","Delivery and Return");
+		get_data_by_sentiment(packaging_data,"chartContainer1","Packaging");
+		get_data_by_sentiment(quality_data,"chartContainer2","Quality");
+		get_data_by_sentiment(support_data,"chartContainer3","Support");
+		get_data_by_sentiment(comparatively_data,"chartContainer4","Comparatively");
+	}
+	function get_data_by_sentiment(data,s,title) {
+		var positive= new Array();
+		var negative= new Array();
+		var neutral= new Array();
+		var ones = new Array();
+		for(var i=0;i<data.length;i++)
+			ones[i]=0;
+		// console.log(ones.length)
+		for(var i=0;i<data.length;i++)
+		{
+			if (ones[i]==0)
+			{
+				var count = 0;
+				for(var j=i;j<data.length;j++)
+				{
+					if (ones[j]==0)
+					{
+						if(data[i].x.getYear()===data[j].x.getYear() && data[i].x.getMonth()===data[j].x.getMonth() && data[i].sentiment.localeCompare(data[j].sentiment)==0)
+						{
+							count += parseInt(data[j].y);
+							ones[j]=1;
+						}
+					}
+				}
+				var element = { y:parseInt(count), x : new  Date(data[i].x), feature:data[i].feature, sentiment:data[i].sentiment};
+				if(data[i].sentiment.toLowerCase().localeCompare("positive")==0)
+					positive.push(element);
+				else if(data[i].sentiment.toLowerCase().localeCompare("negative")==0)
+					negative.push(element);
+				else if(data[i].sentiment.toLowerCase().localeCompare("neutral")==0)
+					neutral.push(element);
+			}
+		}
+		if (!positive_val)
+			positive=[];
+		if(!negative_val)
+			negative=[];
+		if (!neutral_val)
+			neutral=[];
+		console.log(positive,negative,neutral);
+        draw_graph(order_data_by_month(positive),order_data_by_month(negative),order_data_by_month(neutral),s,title);
+
+		// return [positive,negative,neutral]
+	}
+
+	function order_data_by_month(data){
+		var output = new Array();
+		for (var j = 0; j <12; j++)
+		{
+			for (var i = 0; i < data.length; i++)
+				if(j==parseInt(data[i].x.getMonth()))
+					output.push(data[i])
+
+		};
+		return output
+	}
+	function main(){
+
+
+	    
+	    d3.csv("/MOCK_DATA_feature4source.csv", function(data) {
+	    		//from this for we will read the data from the given input file
+	    		//then store in array as dictionaries 
+	    		// we divide the input into diffrent arrays based on the feature
+	    	// based on suuport,quality....
+	        for (var i = 0; i < data.length; i++) 
+			{
+	            var date1 = data[i].date.split("-");
+	    	    var myDate = new Date(date1[1] + " 1, 2000");
+	    	    var monthDigit = myDate.getMonth();
+	    	    var month_nunber = monthDigit + 1;
+	            var feature_var = data[i].feature.toLowerCase();
+	            var element = { y:parseInt(data[i].count),x : new Date(parseInt(date1[2]),parseInt(monthDigit),parseInt(date1[0])),feature:data[i].feature,sentiment:data[i].sentiment};
+	            if (feature_var.localeCompare("support")==0)
+	                support_data.push(element);
+	            else if(feature_var.localeCompare("quality")==0)
+	                quality_data.push(element);
+	            else if(feature_var.localeCompare("packaging")==0)
+	                packaging_data.push(element);
+	            else if(feature_var.localeCompare("delivery_and_return")==0)
+	                delivery_data.push(element);
+	            else if(feature_var.localeCompare("comparatively")==0)
+	                comparatively_data.push(element);
+	        };
+			get_data_by_sentiment(delivery_data,"chartContainer0","Delivery and Return");
+			get_data_by_sentiment(packaging_data,"chartContainer1","Packaging");
+			get_data_by_sentiment(quality_data,"chartContainer2","Quality");
+			get_data_by_sentiment(support_data,"chartContainer3","Support");
+			get_data_by_sentiment(comparatively_data,"chartContainer4","Comparatively");
+			// support = get_data_by_sentiment(support_data);
+			// support_data_positive_final = order_data_by_month(support[0]);
+			// support_data_negative_final = order_data_by_month(support[1]);
+			// support_data_neutral_final = order_data_by_month(support[2]);
+			
+			// // console.log(ones)
+	  //       //console.log(support_data,quality_data,packaging_data,delivery_data,comparatively_data);
+	  //       console.log(support,support_data_positive_final,support_data_negative_final,support_data_neutral_final);
+	  //       draw_graph(support_data_positive_final,support_data_negative_final,support_data_neutral_final,"chartContainer0");
+	        
+	    });
+	}
+
+	function draw_graph(positive,negative,neutral,graphtype,title)
+	{
+		var chart = new CanvasJS.Chart(graphtype,
+	    {
+	    	zoomEnabled: true,
+	    	zoomType: "xy",
+            title: {
+                text: title          
+            },
+            // toolTipContent: "{label}<br/>{name}, <strong>{y}</strong>mn Units",
+            animationEnabled: true,
+            axisX:{      
+                // interval: 1,
+                intervalType: "MMMYYYY"
+                // valueFormatString: "HHmm'hrs'"
+
+            },
+            axisY: {
+                title: "count",
+                interval:10,
+                maximum: 110
+            },
+            // legend: {
+            //     verticalAlign: "bottom",
+            //     horizontalAlign: "center"
+            // },
+
+            data: [{        
+                name: "positive",
+                toolTipContent: "Date:<strong>{x}</strong><br/>Count:<strong>{y}</strong><br/>Sentiment:<strong>{sentiment}</strong><br/>",
+                showInLegend: false,
+                sentiment:"positive",
+                legendMarkerType: "square",
+                type: type,
+                color: "rgba(40,175,101,0.6)",
+                markerSize: 0,
+                
+                dataPoints: positive
+            },
+            {        
+                name: "negative",
+                toolTipContent: "Date:<strong>{x}</strong><br/>Count:<strong>{y}</strong><br/>Sentiment:<strong>{sentiment}</strong><br/>",       
+                showInLegend: false,
+                sentiment:"negative",
+                legendMarkerType: "square",
+                type: type,
+                color: "rgba(200,175,101,0.6)",
+                markerSize: 0,
+                
+                dataPoints: negative
+            },
+            {        
+                name: "neutral",
+                toolTipContent: "Date:<strong>{x}</strong><br/>Count:<strong>{y}</strong><br/>Sentiment:<strong>{sentiment}</strong><br/>",         
+                showInLegend: false,
+                sentiment:"neutral",
+                legendMarkerType: "square",
+                type: type,
+                color: "rgba(40,0,201,0.6)",
+                markerSize: 0,
+                
+                dataPoints: neutral
+            }
+            ]
+        });
+        // d3.csv = d3.dsv(",", "text/csv");
+        
+
+        chart.render();
+	}
+
+	function radio_function(){
+		var radio=document.forms[0];
+		var val = 0;
+		for (var i = 0; i < radio.length; i++) {
+			if(radio[i].checked)
+			{
+				val = i;
+				break;
+			}
+		};
+		var type1 = ["line","area","spline","stepArea","splineArea"];
+		type = type1[val];
+		// draw_graph(support_data_positive_final,support_data_negative_final,support_data_neutral_final,"chartContainer0");
+		get_data_by_sentiment(delivery_data,"chartContainer0","Delivery and Return");
+		get_data_by_sentiment(packaging_data,"chartContainer1","Packaging");
+		get_data_by_sentiment(quality_data,"chartContainer2","Quality");
+		get_data_by_sentiment(support_data,"chartContainer3","Support");
+		get_data_by_sentiment(comparatively_data,"chartContainer4","Comparatively");
+	}
+
+</script>
+<script type="text/javascript" src="canvasjs.min.js"></script>
+</head>
+<body onload="main()">
+	<div class="row" id="row">
+		<div  class="col-sm-3" style="padding-left:3%;padding-top:1%;">
+			<b><p>Select the type of Graph you want and then click on submit</p></b>
+			<form action="form_action.asp">
+		  		<input type="radio" name="line">Line Graph<br>
+		  		<input type="radio" name="line" >Area Graph<br>
+		  		<input type="radio"  name="line">Spline Graph<br>
+		  		<input type="radio" name="line" >StepArea Graph<br>
+		  		<input type="radio" name="line" >SplineArea Graph<br>
+		  		<br>
+		  		<input type="button" onclick="radio_function()" value="submit">
+			</form><br>
+			<b><p>Select the feature you want to see.</p></b>
+			<form action="form_action.asp">
+				<input type="checkbox" id="featureall" onchange="checkAllfeature(this)" checked>ALL<br>
+				<input type="checkbox" id="checkbox0" name="feature" checked>delivery and return<br>
+				<input type="checkbox" id="checkbox1" name="feature" checked>packaging<br>
+				<input type="checkbox" id="checkbox2" name="feature" checked>quality<br>
+				<input type="checkbox" id="checkbox3" name="feature"checked>support<br>
+				<input type="checkbox" id="checkbox4" name="feature"checked>comparatively<br>
+				<br>
+			</form><br>
+			<b><p>Select the Sentiment you want to see.</p></b>
+			<form action="form_action.asp">
+				<input type="checkbox" id="sentimentall"onchange="checkAllsentiment(this)" checked>ALL<br>
+				<input type="checkbox" id="positive" name="sentiment" checked>Show Postive<br>
+				<input type="checkbox" id="negative" name="sentiment" checked>Show Negative<br>
+				<input type="checkbox" id="neutral" name="sentiment" checked>Show Neutral<br>
+				<br>
+			</form>
+		</div>
+		<div  class="col-sm-9" id="chartContainer">
+			<p align="center" style="font-size:250%">Graphs</p>
+			<div id="chartContainer0">
+			</div><br>
+			<div id="chartContainer1">
+			</div><br>
+			<div id="chartContainer2">
+			</div><br>
+			<div id="chartContainer3">
+			</div><br>
+			<div id="chartContainer4">
+			</div>
+		</div>
+	</div>
+
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+
+
+SERVER SETUP:
+	
+	--> To start the server go the downloaded directory
+	--> Then run the command "python run.py" in the terminal 
+	--> Now go to any browser and go to the following link "http://localhost:8000/main.html"
+
+
+
+About the webpage:
+	
+	--> The web page has two parts of which the left contain options and right contains the graph.
+	
+	--> The left part is scrollable and has the following options:
+		1.First set of options
+			for selecting the type of graphs that user wants,for the click the on the
+			graph that you want then click on submit,
+		2.Second set of options
+			this is to select the graphs that you want to display based on the feature
+			i.e support,quality,etc as given in the input file
+		3.Third set of options
+			this is to select the type of sentiments that has to displayed in each graph
+			i.e positive,negative,neutral as given in the input file.
+	
+	--> The right part has:
+		graphs based on the values that are checked/selected from the options that are on
+		the left side of the web page.
+
+	--> Zooming and padding are enabled in all the graphs.
+	--> Hover over the graph data a pop up comes showing the informaiton of that respective point.
